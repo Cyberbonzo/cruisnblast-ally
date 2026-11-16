@@ -21,3 +21,7 @@ Não foram instalados pacotes de sistema. O runtime privado contém apenas as bi
 - O relógio permaneceu parado por dois segundos na pausa. O submenu aceitou direcional, A para alternar e B para retomar.
 - Assinatura do consumo de Blast validada na revisão 1.25. Nenhuma biblioteca adicional instalada.
 - Reinicialização completa leu corretamente a preferência OFF salva; a opção foi então recolocada em ON pelo menu e conferida no arquivo. O jogo foi deixado com boost infinito ativado.
+
+## Revisão 0.1.2 — 16/11/2026
+
+Dificuldade configurada em 0 pela API nativa de ajustes durante a inicialização. As três cópias persistidas de difficulty foram lidas e apresentaram val = 0 após iniciar no Ally.

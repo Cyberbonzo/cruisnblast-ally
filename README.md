@@ -1,4 +1,4 @@
-# Cruis'n Blast Ally — 0.1.1
+# Cruis'n Blast Ally — 0.1.2
 
 Adaptação comunitária para executar uma cópia própria do arcade Linux 1.25 no ROG Ally com Bazzite. Inclui recuperação da inicialização ELF, compatibilidade gráfica com Mesa/AMD, controles do portátil e uma tela de pausa. Executa nativamente em Linux, sem Proton.
 
@@ -50,3 +50,7 @@ O executável original deve ter SHA-256 `cdb5f6b6797ea4ca0c3f76714cf65fa2c8b6602
 Validado no ROG Ally X com Bazzite: inicialização nativa, menus, corrida, aceleração, modo métrico, tela cheia e pausa/retomada. O usuário confirmou funcionamento e controles. A verificação do relógio confirmou que o tempo de pausa não avança o cronômetro da corrida. Nem todas as pistas e combinações de configuração foram testadas.
 
 Veja [VALIDACAO.md](docs/VALIDACAO.md) para os resultados e [PUBLICACAO.md](docs/PUBLICACAO.md) para a separação entre arquivos privados e públicos.
+
+## Dificuldade — 0.1.2
+
+O perfil aplica dificuldade **0** ao iniciar e salva pela rotina nativa do jogo. A escala suportada é de 0 a 10. Para mudar o padrão deste perfil, ajuste a chamada `setting("game","difficulty",0)` no código de compatibilidade e recompile.

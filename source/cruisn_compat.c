@@ -138,6 +138,7 @@ void SDL_GL_SwapBuffers(void){
         setting("main","firstBoot",0);
         setting("playerCost","freeplay",1);
         setting("game","metric",1);
+        setting("game","difficulty",0);
         *(int*)0x09c52cec=1;
         redirect(0x08192880,ally_steering);
         redirect(0x08193720,ally_gas);
