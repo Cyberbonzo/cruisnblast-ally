@@ -1,4 +1,4 @@
-# Cruis'n Blast Ally — 0.1.0
+# Cruis'n Blast Ally — 0.1.1
 
 Adaptação comunitária para executar uma cópia própria do arcade Linux 1.25 no ROG Ally com Bazzite. Inclui recuperação da inicialização ELF, compatibilidade gráfica com Mesa/AMD, controles do portátil e uma tela de pausa. Executa nativamente em Linux, sem Proton.
 
@@ -17,9 +17,19 @@ Adaptação comunitária para executar uma cópia própria do arcade Linux 1.25 
 | Y | Música |
 | Direcional | Navegação |
 | Start | Pausar / retomar |
-| A na pausa | Retomar |
+| Direcional na pausa | Selecionar opção |
+| A na pausa | Confirmar / alternar cheat |
+| B na pausa | Retomar |
 
 Configuração padrão: tela cheia 1920×1080, jogo livre e unidades métricas. O perfil usa SDL no lugar da placa de entradas do gabinete. A pausa mantém o loop de jogo parado, suspende a simulação PhysX e o grupo principal de áudio, e ajusta os relógios internos ao retomar.
+
+## Boost infinito
+
+Pressione **Start/Menu**, selecione **CHEATS INFINITE BLAST** com o direcional e pressione **A** para alternar **ON/OFF**. **B** ou **Start** retoma. O menu de pausa é inglês.
+
+O padrão desta revisão é ON quando não existe preferência anterior. A escolha fica no arquivo privado `game/g5/race/pmuser/ally-infinite-blast.cfg` e é relida ao iniciar. Durante a corrida, pressione **X** para usar Blast. Com ON, o helper repõe o estoque do carro local para três cargas quando fica abaixo disso. A duração do efeito, a física e a ativação continuam nativas. OFF interrompe a reposição; cargas já fornecidas permanecem disponíveis para consumo normal. Não é boost permanentemente ativo e não elimina os intervalos nativos entre ativações.
+
+A revisão suportada é conferida pela assinatura da instrução que consome Blast antes de qualquer reposição. A preferência é gravada por arquivo temporário e renomeação; falhas de gravação aparecem na pausa. Não são alterados executáveis em disco nem arquivos de progresso pelo cheat.
 
 ## Instalação
 

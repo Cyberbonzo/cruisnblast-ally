@@ -8,6 +8,9 @@ extern void *dlopen(const char*,int);
 extern int open(const char*,int,...);
 extern int read(int,void*,unsigned);
 extern int close(int);
+extern int write(int,const void*,unsigned);
+extern int fsync(int);
+extern int rename(const char*,const char*);
 extern void _exit(int);
 extern void *signal(int,void (*)(int));
 static void leave_game(int ignored){(void)ignored;_exit(0);}
@@ -23,6 +26,35 @@ static float steering,throttle,brake;
 static int previous[512],held[512],ticks;
 static unsigned last_buttons;
 static int pause_requested,paused;
+int ally_infinite_boost=1,ally_blast_refills,ally_cheat_valid,ally_pause_selected;
+unsigned ally_player_car;
+static int cheat_save_error;
+static const char *cheat_file="/pm/g5/race/pmuser/ally-infinite-blast.cfg";
+static void save_cheat(void){
+    const char *temp="/pm/g5/race/pmuser/ally-infinite-blast.cfg.tmp";
+    char data[2]={ally_infinite_boost?'1':'0','\n'};
+    int fd=open(temp,0x241,0600);cheat_save_error=1;
+    if(fd>=0){int ok=write(fd,data,2)==2 && fsync(fd)==0;close(fd);if(ok&&rename(temp,cheat_file)==0)cheat_save_error=0;}
+    fprintf(stderr,"ALLY infinite blast %s saved=%d\n",ally_infinite_boost?"ON":"OFF",!cheat_save_error);
+}
+static void init_cheat(void){
+    static const unsigned char expected[7]={0x83,0xab,0xa4,0x0e,0,0,1};
+    ally_cheat_valid=1;
+    for(int i=0;i<7;i++)if(((volatile unsigned char*)0x08213a91)[i]!=expected[i])ally_cheat_valid=0;
+    char value=0;int fd=open(cheat_file,0);
+    if(fd>=0){if(read(fd,&value,1)==1&&(value=='0'||value=='1'))ally_infinite_boost=value=='1';close(fd);}
+    else save_cheat();
+    fprintf(stderr,"ALLY blast validation=%d enabled=%d\n",ally_cheat_valid,ally_infinite_boost);
+}
+static void update_cheat(void){
+    ally_player_car=0;
+    if(!ally_cheat_valid || paused || !*(int*)0x08a9c75c)return;
+    if(((unsigned char(*)(void))0x0819bb00)())return;
+    unsigned car=((unsigned(*)(void))0x081ddd80)();ally_player_car=car;
+    if(!car || !ally_infinite_boost)return;
+    int *charges=(int*)(car+0xea4);
+    if(*charges>=0 && *charges<3){*charges=3;ally_blast_refills++;}
+}
 static void digital(int id,int down){
     int *p=((int*(*)(int))0x08271010)(id);
     if(!p)return;
@@ -68,8 +100,17 @@ static void controls(void){
     int fd=open("/pm/g5/race/pmuser/ally-test-input.bin",0);
     if(fd>=0){if(read(fd,&test,sizeof(test))==sizeof(test)&&test.magic==0x414c4c59){buttons=test.buttons;steering=test.steer;throttle=test.gas;brake=test.brake;}close(fd);}
     if((buttons&64)&&!(last_buttons&64))pause_requested=1;
-    if(paused && (buttons&1)&&!(last_buttons&1))pause_requested=1;
+    if(paused){
+        unsigned edge=buttons&~last_buttons;
+        if(edge&((1u<<11)|(1u<<12)))ally_pause_selected^=1;
+        if(edge&2)pause_requested=1;
+        if(edge&1){
+            if(ally_pause_selected && ally_cheat_valid){ally_infinite_boost=!ally_infinite_boost;save_cheat();}
+            else if(!ally_pause_selected)pause_requested=1;
+        }
+    }
     last_buttons=buttons;
+    if(paused){buttons=0;steering=throttle=brake=0;}
     digital(0x173,!!(buttons&5)); /* A confirms, X also activates Blast */
     digital(0x177,!!(buttons&(1<<1))); /* view */
     digital(0x178,!!(buttons&(1<<3))); /* tunes */
@@ -91,6 +132,7 @@ void SDL_GL_SwapBuffers(void){
     if(!swap)swap=next("SDL_GL_SwapBuffers");
     if(!configured){
         configured=1;
+        init_cheat();
         signal(15,leave_game);
         setting("hardware","cabType",1);
         setting("main","firstBoot",0);
@@ -110,6 +152,6 @@ void SDL_GL_SwapBuffers(void){
         get(0x0ba2,viewport);get(0x8ca6,&fbo);
         fprintf(stderr,"ALLY frame=%d GL=%s err=%x vp=%d,%d,%d,%d fbo=%d DISPLAY=%s\n",frames,str(0x1f02),error(),viewport[0],viewport[1],viewport[2],viewport[3],fbo,getenv("DISPLAY"));
     }
-    frames++;swap();
+    update_cheat();frames++;swap();
     if(pause_requested){pause_requested=0;pause_screen(swap);}
 }

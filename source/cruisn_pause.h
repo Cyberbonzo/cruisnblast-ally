@@ -34,7 +34,7 @@ static void pause_screen(void (*swap)(void)){
     if(master&&mute&&*(void**)0x09c5a99c)master(*(void**)0x09c5a99c,&group);
     if(group)mute(group,1);
     *(int*)0x08a9c75c=0;
-    paused=1;fprintf(stderr,"ALLY PAUSE entered clock=%llu\n",*(unsigned long long*)0x09d87c78);
+    paused=1;ally_pause_selected=0;fprintf(stderr,"ALLY PAUSE entered clock=%llu\n",*(unsigned long long*)0x09d87c78);
     gBegin=next("glBegin");gEnd=next("glEnd");gVertex=next("glVertex2f");gColor=next("glColor3f");
     get(0x8b8d,&program);get(0x8ca6,&fbo);get(0x0ba0,&mode);get(0x0ba2,vp);
     push(0xfffff);use(0);bind(0x8d40,0);viewport(0,0,1920,1080);
@@ -45,10 +45,14 @@ static void pause_screen(void (*swap)(void)){
     clearcolor(.025f,.035f,.065f,1);
     while(!pause_requested){
         clear(0x4000);gColor(.95f,.65f,.08f);gBegin(7);quad(320,245,1280,7);gEnd();
-        gColor(1,1,1);label("PAUSADO",540,330,20);
-        gColor(.65f,.72f,.85f);label("START OU A PARA CONTINUAR",455,565,7);
-        label("RT ACELERAR    LT FREAR",495,730,7);
-        label("X BLAST    B CAMERA",555,815,7);
+        gColor(1,1,1);label("PAUSED",600,310,20);
+        gColor(.14f,.21f,.32f);gBegin(7);quad(350,500+ally_pause_selected*110,1220,85);gEnd();
+        gColor(1,1,1);label("RESUME",410,520,7);
+        label("CHEATS  INFINITE BLAST",410,630,6);
+        gColor(.95f,.65f,.08f);label(!ally_cheat_valid?"ERROR":ally_infinite_boost?"ON":"OFF",1320,630,6);
+        gColor(.65f,.72f,.85f);label("DPAD SELECT   A CONFIRM   B START RESUME",350,780,5);
+        label("X BLAST    RT GAS    LT BRAKE",455,870,6);
+        if(cheat_save_error){gColor(1,.3f,.2f);label("SETTING SAVE FAILED",620,950,5);}
         swap();unsigned char event[64];while(poll(event)){}
         controls();usleep(16000);
     }

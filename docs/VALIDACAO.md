@@ -13,3 +13,11 @@ Data: 15/11/2026. Ambiente: ROG Ally X, Bazzite x86_64, Mesa 26.2.6, runtime do 
 Limite da validação: a versão não representa uma campanha completa de testes de todas as pistas. O teste de entrada automatizado usa o mesmo callback dos controles, mas não substitui a confirmação dos botões físicos feita pelo usuário.
 
 Não foram instalados pacotes de sistema. O runtime privado contém apenas as bibliotecas necessárias para este jogo. As regras de dispositivos escritas pelo software do gabinete ficam em um caminho privado dentro do sandbox; o `/etc/udev` do sistema permanece intacto.
+
+## Revisão 0.1.1 — 16/11/2026
+
+- Boost infinito ON/OFF na pausa inglesa, com escolha persistente em arquivo privado.
+- Teste pelo callback dos controles: OFF consumiu três cargas e terminou com zero, sem novas ativações; ON executou cinco ativações e manteve três cargas disponíveis.
+- O relógio permaneceu parado por dois segundos na pausa. O submenu aceitou direcional, A para alternar e B para retomar.
+- Assinatura do consumo de Blast validada na revisão 1.25. Nenhuma biblioteca adicional instalada.
+- Reinicialização completa leu corretamente a preferência OFF salva; a opção foi então recolocada em ON pelo menu e conferida no arquivo. O jogo foi deixado com boost infinito ativado.
