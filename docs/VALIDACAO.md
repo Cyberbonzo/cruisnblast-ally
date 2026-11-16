@@ -25,3 +25,15 @@ Não foram instalados pacotes de sistema. O runtime privado contém apenas as bi
 ## Revisão 0.1.2 — 16/11/2026
 
 Dificuldade configurada em 0 pela API nativa de ajustes durante a inicialização. As três cópias persistidas de difficulty foram lidas e apresentaram val = 0 após iniciar no Ally.
+
+## Revisão 0.1.3 — 16/11/2026
+
+- Perfil automático carregado antes da seleção de carros, sem entrada de PIN. Os seis pontos de integração são validados antes da instalação em memória.
+- Sessão anterior de convidado preservada localmente e migrada sem apagar dados preexistentes. A melhoria que estava em memória foi mantida.
+- Corrida real em Londres registrada com tempo de 1:39,58. O perfil, a tabela nativa e a cópia atômica concordaram sobre carro, melhorias e tempo.
+- Após fechar completamente e reabrir pelo Steam, o teste comparou carro, todas as 23 entradas de melhorias, os cinco melhores tempos e todos os bytes de estatísticas: iguais ao save anterior, sem digitar PIN.
+- Pausa permaneceu funcional, com relógio congelado por dois segundos; boost infinito ON e dificuldade 0 preservados.
+- Testes em pasta temporária verificaram restauração de perfil corrompido/tabela truncada, rejeição de checksum inválido, preservação de arquivo atual válido e rotação de oito backups. Dois testes públicos usam somente dados sintéticos; nenhum save é distribuído.
+- GCC i386 compilou a integração sem avisos. Nenhum pacote adicional instalado.
+
+Limites: a validação não percorreu todos os desbloqueios e pistas. O mecanismo preserva o perfil completo nativo, mas não cria conteúdo de outras edições nem salva a posição de uma corrida em andamento. Records de gabinete existentes foram mantidos; o novo tempo também apareceu na tabela de Londres.

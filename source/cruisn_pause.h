@@ -19,6 +19,7 @@ static void label(const char *s,float x,float y,float scale){
     gEnd();
 }
 static void pause_screen(void (*swap)(void)){
+    profile_flush();
     void (*push)(unsigned)=next("glPushAttrib"),(*pop)(void)=next("glPopAttrib");
     void (*get)(unsigned,int*)=next("glGetIntegerv"),(*use)(unsigned)=next("glUseProgram");
     void (*bind)(unsigned,unsigned)=next("glBindFramebuffer");
@@ -43,7 +44,7 @@ static void pause_screen(void (*swap)(void)){
     disable(0xb71);disable(0xb50);disable(0xb44);disable(0xc11);disable(0xbe2);disable(0xbc0);
     for(int i=0;i<8;i++){active(0x84c0+i);disable(0xde1);}active(0x84c0);
     clearcolor(.025f,.035f,.065f,1);
-    while(!pause_requested){
+    while(!pause_requested&&!exit_requested){
         clear(0x4000);gColor(.95f,.65f,.08f);gBegin(7);quad(320,245,1280,7);gEnd();
         gColor(1,1,1);label("PAUSED",600,310,20);
         gColor(.14f,.21f,.32f);gBegin(7);quad(350,500+ally_pause_selected*110,1220,85);gEnd();
@@ -52,7 +53,8 @@ static void pause_screen(void (*swap)(void)){
         gColor(.95f,.65f,.08f);label(!ally_cheat_valid?"ERROR":ally_infinite_boost?"ON":"OFF",1320,630,6);
         gColor(.65f,.72f,.85f);label("DPAD SELECT   A CONFIRM   B START RESUME",350,780,5);
         label("X BLAST    RT GAS    LT BRAKE",455,870,6);
-        if(cheat_save_error){gColor(1,.3f,.2f);label("SETTING SAVE FAILED",620,950,5);}
+        if(ally_profile_error){gColor(1,.3f,.2f);label("PROFILE SAVE FAILED",620,950,5);}
+        else if(cheat_save_error){gColor(1,.3f,.2f);label("SETTING SAVE FAILED",620,950,5);}
         swap();unsigned char event[64];while(poll(event)){}
         controls();usleep(16000);
     }

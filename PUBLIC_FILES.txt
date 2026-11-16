@@ -9,7 +9,10 @@ docs/VALIDACAO.md
 jogar.sh
 source/cruisn_compat.c
 source/cruisn_pause.h
+source/cruisn_progress.h
+source/progress.py
 source/run.py
+tests/test_progress.py
 tools/cruisn_elf.py
 tools/fix_shaders.py
 tools/instalar.py

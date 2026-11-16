@@ -13,7 +13,8 @@ extern int fsync(int);
 extern int rename(const char*,const char*);
 extern void _exit(int);
 extern void *signal(int,void (*)(int));
-static void leave_game(int ignored){(void)ignored;_exit(0);}
+static volatile int exit_requested;
+static void leave_game(int ignored){(void)ignored;exit_requested=1;}
 static void *next(const char *name){return dlsym((void*)-1,name);}
 static void *sdl2,*pad;
 static int (*padnum)(void),(*ispad)(int),(*init)(U32);
@@ -121,6 +122,7 @@ static void controls(void){
     digital(13,!!(buttons&1));
     digital(27,!!(buttons&(1<<4)));
 }
+#include "cruisn_progress.h"
 #include "cruisn_pause.h"
 static void setting(const char *group,const char *key,int value){
     ((int(*)(const char*,const char*,int))0x0825d7c0)(group,key,value);
@@ -133,6 +135,7 @@ void SDL_GL_SwapBuffers(void){
     if(!configured){
         configured=1;
         init_cheat();
+        init_profile();
         signal(15,leave_game);
         setting("hardware","cabType",1);
         setting("main","firstBoot",0);
@@ -153,6 +156,8 @@ void SDL_GL_SwapBuffers(void){
         get(0x0ba2,viewport);get(0x8ca6,&fbo);
         fprintf(stderr,"ALLY frame=%d GL=%s err=%x vp=%d,%d,%d,%d fbo=%d DISPLAY=%s\n",frames,str(0x1f02),error(),viewport[0],viewport[1],viewport[2],viewport[3],fbo,getenv("DISPLAY"));
     }
+    update_profile();
+    if(exit_requested){profile_flush();_exit(0);}
     update_cheat();frames++;swap();
     if(pause_requested){pause_requested=0;pause_screen(swap);}
 }
